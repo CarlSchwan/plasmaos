@@ -1,0 +1,17 @@
+stages:
+  - build
+
+build-job:
+  parallel:
+    matrix:
+      - RECIPE: recipe.yml
+
+  stage: build
+  script:
+    # Downlowd yq
+    - wget https://github.com/mikefarah/yq/releases/download/4.35.2/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+
+    - IMAGE_NAME=$(yq '.name' ./config/$RECIPE)
+    - IMAGE_DESCRIPTION=$(yq '.description' ./config/$RECIPE)
+    - IMAGE_MAJOR_VERSION=$(yq '.image-version' ./config/$RECIPE)
+    - BASE_IMAGE_URL=$(yq '.base-image' ./config/$RECIPE)
